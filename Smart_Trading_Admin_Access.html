@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Trading</title>
+
+  <style>
+    :root {
+      --bg: #071521;
+      --card: #102536;
+      --card-2: #142d40;
+      --border: #24445b;
+      --gold: #e8bd58;
+      --text: #f4f7fa;
+      --muted: #91a7b7;
+      --green: #36c995;
+      --red: #ee6c68;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 10% 20%, #123248 0, transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: Tahoma, Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 28px));
+      margin: auto;
+    }
+
+    header {
+      height: 72px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(7, 21, 33, .94);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      color: var(--gold);
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: .4px;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    nav a,
+    .outline-btn {
+      color: var(--text);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 10px 15px;
+      border-radius: 7px;
+      font-size: 13px;
+      background: transparent;
+    }
+
+    nav a:hover,
+    .outline-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .primary-btn {
+      background: var(--gold);
+      color: #1a1a16;
+      border: 0;
+      padding: 12px 18px;
+      border-radius: 7px;
+      font-weight: bold;
+    }
+
+    .menu {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 7px;
+    }
+
+    .hero {
+      padding: 72px 0 35px;
+      text-align: center;
+    }
+
+    .hero small {
+      color: var(--gold);
+      font-weight: bold;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 65px);
+      line-height: 1.2;
+      margin: 18px auto;
+      max-width: 850px;
+    }
+
+    .hero h1 span {
+      color: var(--gold);
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 650px;
+      margin: auto;
+      line-height: 2;
+      font-size: 16px;
+    }
+
+    .actions {
+      margin-top: 26px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .market-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .market-card,
+    .panel,
+    .tool-card {
+      background: linear-gradient(145deg, var(--card), #0d2030);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .market-card {
+      padding: 18px;
+    }
+
+    .market-card small,
+    .muted {
+      color: var(--muted);
+    }
+
+    .market-card strong {
+      display: block;
+      margin: 12px 0 4px;
+      font-size: 21px;
+    }
+
+    .up {
+      color: var(--green);
+    }
+
+    .down {
+      color: var(--red);
+    }
+
+    .section-title {
+      margin: 42px 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .section-title h2 {
+      font-size: 24px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .analysis-layout {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .asset {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .asset-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(232, 189, 88, .14);
+      color: var(--gold);
+      font-weight: bold;
+    }
+
+    .timeframes {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .timeframes button {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      padding: 7px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .timeframes button.active,
+    .timeframes button:hover {
+      background: var(--gold);
+      color: #1a1a16;
+    }
+
+    canvas {
+      width: 100%;
+      height: 285px;
+      background:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .signal {
+      display: inline-block;
+      background: rgba(54, 201, 149, .14);
+      color: var(--green);
+      border: 1px solid rgba(54, 201, 149, .4);
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .levels {
+      display: grid;
+      gap: 11px;
+    }
+
+    .level {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .level span:first-child {
+      color: var(--muted);
+    }
+
+    .level strong {
+      color: var(--gold);
+    }
+
+    .tools {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+    }
+
+    .tool-card {
+      padding: 20px;
+      transition: .2s;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+    }
+
+    .tool-card b {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .tool-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .calculator {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .field input {
+      width: 100%;
+      background: #081a29;
+      border: 1px solid var(--border);
+      color: white;
+      padding: 12px;
+      border-radius: 7px;
+      outline: none;
+    }
+
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      background: rgba(232, 189, 88, .1);
+      border: 1px solid rgba(232, 189, 88, .35);
+      color: var(--gold);
+      line-height: 2;
+    }
+
+    footer {
+      margin-top: 60px;
+      padding: 25px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 850px) {
+      nav {
+        display: none;
+        position: absolute;
+        top: 72px;
+        right: 14px;
+        left: 14px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 12px;
+        border-radius: 10px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      nav.open {
+        display: flex;
+      }
+
+      .menu {
+        display: block;
+      }
+
+      .market-strip,
+      .tools {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .analysis-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .market-strip,
+      .tools,
+      .calculator {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        height: 62px;
+      }
+
+      .hero {
+        padding-top: 48px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+    }
+
+    /* ===== AUTH SYSTEM ===== */
+    .auth-overlay{
+      position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;
+      padding:20px; background:rgba(3,12,19,.94); backdrop-filter:blur(14px);
+    }
+    .auth-box{
+      width:min(440px,100%); background:linear-gradient(145deg,var(--card),#0b1c2b);
+      border:1px solid var(--border); border-radius:16px; padding:28px; box-shadow:0 25px 80px rgba(0,0,0,.45);
+    }
+    .auth-box h2{color:var(--gold);margin-bottom:8px}
+    .auth-box .auth-sub{color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:20px}
+    .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+    .auth-tab{padding:10px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:7px;cursor:pointer}
+    .auth-tab.active{background:var(--gold);color:#1a1a16;border-color:var(--gold);font-weight:bold}
+    .auth-form{display:grid;gap:12px}
+    .auth-form input{
+      width:100%;background:#081a29;border:1px solid var(--border);color:#fff;
+      padding:13px;border-radius:7px;outline:none
+    }
+    .auth-form input:focus{border-color:var(--gold)}
+    .auth-msg{min-height:22px;color:var(--red);font-size:12px;line-height:1.7}
+    .auth-note{margin-top:14px;color:var(--muted);font-size:11px;line-height:1.7}
+    .user-bar{display:none;align-items:center;gap:8px}
+    .status-badge{padding:6px 9px;border-radius:15px;font-size:11px;border:1px solid var(--border)}
+    .admin-panel{
+      display:none;position:fixed;inset:0;z-index:9998;background:rgba(3,12,19,.96);
+      padding:25px;overflow:auto
+    }
+    .admin-wrap{width:min(1000px,100%);margin:auto}
+    .admin-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
+    .admin-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .admin-table th,.admin-table td{padding:12px;border-bottom:1px solid var(--border);text-align:right;font-size:12px}
+    .admin-table th{color:var(--gold)}
+    .status-select{background:#081a29;color:#fff;border:1px solid var(--border);padding:7px;border-radius:6px}
+    .admin-empty{padding:25px;text-align:center;color:var(--muted)}
+    .danger-btn{background:transparent;color:var(--red);border:1px solid rgba(238,108,104,.5);padding:8px 12px;border-radius:7px;cursor:pointer}
+    @media(max-width:600px){
+      .auth-box{padding:20px}
+      .admin-panel{padding:12px}
+      .admin-table{font-size:11px}
+      .admin-table th,.admin-table td{padding:8px}
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:16px">
+      <button class="menu" id="menuBtn">☰</button>
+
+      <nav id="nav">
+        <a href="#analysis">التحليل والرسم البياني</a>
+        <a href="#tools">أدوات التداول</a>
+        <a href="#calculator">حاسبة المخاطرة</a>
+        <a href="#news">الأخبار</a>
+        <button class="outline-btn" id="loginBtn">تسجيل الدخول</button>
+      </nav>
+
+      <div class="logo">SMART TRADING</div>
+      <div class="user-bar" id="userBar">
+        <span class="status-badge" id="userStatus"></span>
+        <button class="outline-btn" id="adminBtn" style="display:none">لوحة الأدمن</button>
+        <button class="outline-btn" id="logoutBtn">خروج</button>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- AUTH OVERLAY -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-box">
+      <h2>SMART TRADING</h2>
+      <div class="auth-sub">تسجيل الدخول للمنصة. حساب الأدمن يمكنه الدخول مباشرة وإدارة المستخدمين.</div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="loginTab">تسجيل الدخول</button>
+        <button class="auth-tab" id="registerTab">إنشاء حساب</button>
+      </div>
+
+      <form class="auth-form" id="authForm">
+        <input id="authEmail" type="email" placeholder="البريد الإلكتروني" autocomplete="email" required>
+        <input id="authPassword" type="password" placeholder="كلمة المرور" autocomplete="current-password" required>
+        <input id="authName" type="text" placeholder="الاسم" autocomplete="name" style="display:none">
+        <div class="auth-msg" id="authMsg"></div>
+        <button class="primary-btn" type="submit" id="authSubmit">دخول</button>
+      </form>
+
+      <div class="auth-note">
+        حساب الأدمن التجريبي مضبوط داخل الكود. بعد ربط المنصة بقاعدة بيانات حقيقية يجب نقل صلاحيات الأدمن والمستخدمين إلى خادم آمن.
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-wrap">
+      <div class="admin-head">
+        <div>
+          <h2 style="color:var(--gold)">لوحة تحكم الأدمن</h2>
+          <p class="muted" style="margin-top:6px">إدارة حالات المستخدمين</p>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="outline-btn" id="closeAdminBtn">العودة للمنصة</button>
+          <button class="danger-btn" id="adminLogoutBtn">تسجيل الخروج</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div id="adminUsers"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="hero">
+      <small>SMART TRADING PLATFORM</small>
+      <h1>حلّل السوق <span>بذكاء</span><br />واتخذ قرارات أفضل</h1>
+      <p>
+        منصة متكاملة لتحليل الذهب والأسواق المالية، توفر لك أدوات التداول
+        والرسوم البيانية وإدارة المخاطر في مكان واحد.
+      </p>
+
+      <div class="actions">
+        <button class="primary-btn" onclick="document.querySelector('#analysis').scrollIntoView({behavior:'smooth'})">
+          ابدأ التحليل
+        </button>
+        <button class="outline-btn" onclick="document.querySelector('#tools').scrollIntoView({behavior:'smooth'})">
+          اكتشف أدوات التداول
+        </button>
+      </div>
+    </section>
+
+    <section class="market-strip">
+      <div class="market-card">
+        <small>الذهب XAU/USD</small>
+        <strong id="goldPrice">$4,158.50</strong>
+        <span class="up">▲ +0.84%</span>
+      </div>
+
+      <div class="market-card">
+        <small>EUR/USD</small>
+        <strong>1.1748</strong>
+        <span class="down">▼ -0.12%</span>
+      </div>
+
+      <div class="market-card">
+        <small>Bitcoin</small>
+        <strong>$112,480</strong>
+        <span class="up">▲ +1.21%</span>
+      </div>
+
+      <div class="market-card">
+        <small>مؤشر الدولار</small>
+        <strong>98.42</strong>
+        <span class="down">▼ -0.35%</span>
+      </div>
+    </section>
+
+    <div class="section-title" id="analysis">
+      <div>
+        <h2>تحليل الذهب XAU/USD</h2>
+        <p>نظرة فنية على حركة السعر الحالية</p>
+      </div>
+      <span class="signal">الاتجاه: صاعد</span>
+    </div>
+
+    <section class="analysis-layout">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="asset">
+            <div class="asset-icon">Au</div>
+            <div>
+              <b>Gold / US Dollar</b>
+              <div class="muted">السعر الفوري</div>
+            </div>
+          </div>
+          <strong style="color:var(--gold)" id="chartPrice">$4,158.50</strong>
+        </div>
+
+        <div class="timeframes">
+          <button>15 دقيقة</button>
+          <button class="active">ساعة</button>
+          <button>4 ساعات</button>
+          <button>يومي</button>
+        </div>
+
+        <canvas id="chart" width="900" height="360"></canvas>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>مستويات السوق</h3>
+            <p class="muted">تحليل فني مبدئي</p>
+          </div>
+          <span class="signal">شراء</span>
+        </div>
+
+        <div class="levels">
+          <div class="level">
+            <span>السعر الحالي</span>
+            <strong>4,158.50</strong>
+          </div>
+
+          <div class="level">
+            <span>منطقة الدخول</span>
+            <strong>4,150.00</strong>
+          </div>
+
+          <div class="level">
+            <span>المقاومة الأولى</span>
+            <strong>4,180.00</strong>
+          </div>
+
+          <div class="level">
+            <span>الهدف الثاني</span>
+            <strong>4,215.00</strong>
+          </div>
+
+          <div class="level">
+            <span>وقف الخسارة</span>
+            <strong style="color:var(--red)">4,125.00</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title" id="tools">
+      <div>
+        <h2>أدوات التداول</h2>
+        <p>أدوات تساعدك على تحليل الصفقة وإدارة المخاطر</p>
+      </div>
+    </div>
+
+    <section class="tools">
+      <div class="tool-card">
+        <b>حاسبة حجم الصفقة</b>
+        <p>احسب الحجم المناسب للصفقة بناءً على رأس المال والمخاطرة.</p>
+      </div>
+
+      <div class="tool-card">
+        <b>حاسبة المخاطرة</b>
+        <p>حدد نسبة المخاطرة وقيمة الخسارة المحتملة قبل الدخول.</p>
+      </div>
+
+      <div class="tool-card">
+        <b>الدعم والمقاومة</b>
+        <p>تابع أهم المستويات السعرية المؤثرة في حركة السوق.</p>
+      </div>
+
+      <div class="tool-card">
+        <b>الأخبار والتوقعات</b>
+        <p>تابع الأخبار الاقتصادية التي قد تؤثر على الأسواق.</p>
+      </div>
+    </section>
+
+    <div class="section-title" id="calculator">
+      <div>
+        <h2>حاسبة إدارة المخاطر</h2>
+        <p>أدخل البيانات للحصول على حجم الصفقة المقترح</p>
+      </div>
+    </div>
+
+    <section class="panel">
+      <div class="calculator">
+        <div class="field">
+          <label>رأس المال</label>
+          <input id="capital" type="number" value="10000" />
+        </div>
+
+        <div class="field">
+          <label>نسبة المخاطرة %</label>
+          <input id="risk" type="number" value="1" />
+        </div>
+
+        <div class="field">
+          <label>وقف الخسارة بالنقاط</label>
+          <input id="stop" type="number" value="300" />
+        </div>
+
+        <div style="display:flex;align-items:end">
+          <button class="primary-btn" style="width:100%" onclick="calculateRisk()">
+            احسب الآن
+          </button>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        قيمة المخاطرة: 100 دولار — حجم الصفقة المقترح: 0.33 لوت
+      </div>
+    </section>
+
+    <div class="section-title" id="news">
+      <div>
+        <h2>آخر التحليلات</h2>
+        <p>محتوى مختصر لمتابعة حركة الأسواق</p>
+      </div>
+    </div>
+
+    <section class="tools">
+      <div class="tool-card">
+        <b>تحليل الذهب اليوم</b>
+        <p>مراقبة مناطق الدعم والمقاومة والسيناريوهات المحتملة.</p>
+      </div>
+
+      <div class="tool-card">
+        <b>كيف تقرأ الشارت؟</b>
+        <p>شرح مبسط للشموع اليابانية والاتجاهات السعرية.</p>
+      </div>
+
+      <div class="tool-card">
+        <b>إدارة رأس المال</b>
+        <p>قواعد عملية للحفاظ على رأس المال وتقليل الخسائر.</p>
+      </div>
+
+      <div class="tool-card">
+        <b>اشترك في PRO</b>
+        <p>احصل على تحليلات متقدمة وتنبيهات مباشرة.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Smart Trading © 2026 — تداول بذكاء، حلّل بثقة
+  </footer>
+
+  <script>
+
+    /* ===== SMART TRADING AUTH =====
+       Local demo authentication:
+       Admin: admin@smarttrading.local
+       Password: Admin@1234
+    */
+    const ADMIN_EMAIL = "admin@smarttrading.local";
+    const ADMIN_PASSWORD = "Admin@1234";
+    const USERS_KEY = "smartTradingUsers";
+    const SESSION_KEY = "smartTradingSession";
+
+    const authOverlay = document.getElementById("authOverlay");
+    const authForm = document.getElementById("authForm");
+    const authEmail = document.getElementById("authEmail");
+    const authPassword = document.getElementById("authPassword");
+    const authName = document.getElementById("authName");
+    const authMsg = document.getElementById("authMsg");
+    const authSubmit = document.getElementById("authSubmit");
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const loginBtn = document.getElementById("loginBtn");
+    const userBar = document.getElementById("userBar");
+    const userStatus = document.getElementById("userStatus");
+    const adminBtn = document.getElementById("adminBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const closeAdminBtn = document.getElementById("closeAdminBtn");
+    const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+    const adminUsers = document.getElementById("adminUsers");
+
+    let authMode = "login";
+
+    function getUsers(){
+      try { return JSON.parse(localStorage.getItem(USERS_KEY) || "[]"); }
+      catch(e){ return []; }
+    }
+
+    function saveUsers(users){
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    function setSession(session){
+      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    }
+
+    function getSession(){
+      try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); }
+      catch(e){ return null; }
+    }
+
+    function clearSession(){
+      localStorage.removeItem(SESSION_KEY);
+    }
+
+    function setAuthMode(mode){
+      authMode = mode;
+      const isLogin = mode === "login";
+      loginTab.classList.toggle("active", isLogin);
+      registerTab.classList.toggle("active", !isLogin);
+      authName.style.display = isLogin ? "none" : "block";
+      authName.required = !isLogin;
+      authSubmit.textContent = isLogin ? "دخول" : "إنشاء الحساب";
+      authMsg.textContent = "";
+    }
+
+    function showAuth(message=""){
+      authOverlay.style.display = "flex";
+      authMsg.textContent = message;
+    }
+
+    function hideAuth(){
+      authOverlay.style.display = "none";
+    }
+
+    function statusText(status){
+      return {
+        pending:"في انتظار الموافقة",
+        approved:"مسموح باستخدام الأدوات",
+        rejected:"مرفوض",
+        banned:"محظور"
+      }[status] || status;
+    }
+
+    function updateUserBar(session){
+      if(!session){
+        userBar.style.display = "none";
+        return;
+      }
+      userBar.style.display = "flex";
+      userStatus.textContent = session.role === "admin" ? "ADMIN" : statusText(session.status);
+      adminBtn.style.display = session.role === "admin" ? "inline-block" : "none";
+    }
+
+    function enterAsAdmin(){
+      const session = {
+        role:"admin",
+        email:ADMIN_EMAIL,
+        name:"Administrator"
+      };
+      setSession(session);
+      hideAuth();
+      updateUserBar(session);
+    }
+
+    function renderAdminUsers(){
+      const users = getUsers();
+      if(!users.length){
+        adminUsers.innerHTML = '<div class="admin-empty">لا يوجد مستخدمون مسجلون حتى الآن.</div>';
+        return;
+      }
+
+      let html = `
+        <div style="overflow:auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>البريد</th>
+              <th>الحالة</th>
+              <th>الإجراء</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      users.forEach((u, i) => {
+        html += `
+          <tr>
+            <td>${escapeHtml(u.name || "-")}</td>
+            <td dir="ltr">${escapeHtml(u.email)}</td>
+            <td>
+              <select class="status-select" data-index="${i}">
+                <option value="pending" ${u.status==="pending"?"selected":""}>pending</option>
+                <option value="approved" ${u.status==="approved"?"selected":""}>approved</option>
+                <option value="rejected" ${u.status==="rejected"?"selected":""}>rejected</option>
+                <option value="banned" ${u.status==="banned"?"selected":""}>banned</option>
+              </select>
+            </td>
+            <td>
+              <button class="danger-btn delete-user" data-index="${i}">حذف</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += "</tbody></table></div>";
+      adminUsers.innerHTML = html;
+
+      document.querySelectorAll(".status-select").forEach(select => {
+        select.addEventListener("change", e => {
+          const users = getUsers();
+          const index = Number(e.target.dataset.index);
+          users[index].status = e.target.value;
+          saveUsers(users);
+          renderAdminUsers();
+        });
+      });
+
+      document.querySelectorAll(".delete-user").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const users = getUsers();
+          users.splice(Number(e.target.dataset.index), 1);
+          saveUsers(users);
+          renderAdminUsers();
+        });
+      });
+    }
+
+    function escapeHtml(value){
+      return String(value).replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+
+    function openAdmin(){
+      const session = getSession();
+      if(!session || session.role !== "admin") return;
+      adminPanel.style.display = "block";
+      renderAdminUsers();
+    }
+
+    function logout(){
+      clearSession();
+      adminPanel.style.display = "none";
+      userBar.style.display = "none";
+      authForm.reset();
+      setAuthMode("login");
+      showAuth();
+    }
+
+    loginTab.addEventListener("click", () => setAuthMode("login"));
+    registerTab.addEventListener("click", () => setAuthMode("register"));
+
+    loginBtn.addEventListener("click", () => {
+      showAuth();
+      setAuthMode("login");
+    });
+
+    logoutBtn.addEventListener("click", logout);
+    adminBtn.addEventListener("click", openAdmin);
+    closeAdminBtn.addEventListener("click", () => adminPanel.style.display = "none");
+    adminLogoutBtn.addEventListener("click", logout);
+
+    authForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const email = authEmail.value.trim().toLowerCase();
+      const password = authPassword.value;
+      const name = authName.value.trim();
+
+      if(authMode === "login"){
+        /* ADMIN HAS DIRECT ACCESS */
+        if(email === ADMIN_EMAIL && password === ADMIN_PASSWORD){
+          enterAsAdmin();
+          return;
+        }
+
+        const user = getUsers().find(u => u.email === email && u.password === password);
+
+        if(!user){
+          authMsg.textContent = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+          return;
+        }
+
+        if(user.status === "approved"){
+          const session = {
+            role:"user",
+            email:user.email,
+            name:user.name,
+            status:user.status
+          };
+          setSession(session);
+          hideAuth();
+          updateUserBar(session);
+          return;
+        }
+
+        if(user.status === "pending"){
+          authMsg.textContent = "حسابك في انتظار موافقة الأدمن.";
+          return;
+        }
+
+        if(user.status === "rejected"){
+          authMsg.textContent = "تم رفض طلب الدخول من الأدمن.";
+          return;
+        }
+
+        if(user.status === "banned"){
+          authMsg.textContent = "هذا الحساب محظور.";
+          return;
+        }
+      }
+
+      if(authMode === "register"){
+        if(!name){
+          authMsg.textContent = "اكتب الاسم.";
+          return;
+        }
+
+        const users = getUsers();
+        if(users.some(u => u.email === email) || email === ADMIN_EMAIL){
+          authMsg.textContent = "هذا البريد مسجل بالفعل.";
+          return;
+        }
+
+        users.push({
+          id:Date.now(),
+          name,
+          email,
+          password,
+          status:"pending",
+          createdAt:new Date().toISOString()
+        });
+
+        saveUsers(users);
+        authMsg.style.color = "var(--green)";
+        authMsg.textContent = "تم إنشاء الحساب. انتظر موافقة الأدمن.";
+        authForm.reset();
+        setTimeout(() => {
+          authMsg.style.color = "var(--red)";
+          setAuthMode("login");
+        }, 900);
+      }
+    });
+
+    /* Restore session. If none exists, show login. */
+    (function initAuth(){
+      const session = getSession();
+
+      if(session && session.role === "admin"){
+        hideAuth();
+        updateUserBar(session);
+        return;
+      }
+
+      if(session && session.role === "user"){
+        const user = getUsers().find(u => u.email === session.email);
+        if(user && user.status === "approved"){
+          session.status = user.status;
+          setSession(session);
+          hideAuth();
+          updateUserBar(session);
+          return;
+        }
+      }
+
+      showAuth();
+    })();
+
+
+    const menuBtn = document.getElementById("menuBtn");
+    const nav = document.getElementById("nav");
+
+    menuBtn.addEventListener("click", () => {
+      nav.classList.toggle("open");
+    });
+
+    function calculateRisk() {
+      const capital = Number(document.getElementById("capital").value);
+      const risk = Number(document.getElementById("risk").value);
+      const stop = Number(document.getElementById("stop").value);
+
+      if (!capital || !risk || !stop) return;
+
+      const riskValue = capital * (risk / 100);
+      const lot = riskValue / stop;
+
+      document.getElementById("result").innerHTML =
+        `قيمة المخاطرة: <b>${riskValue.toFixed(2)} دولار</b>
+        — حجم الصفقة المقترح: <b>${lot.toFixed(2)} لوت</b>`;
+    }
+
+    const canvas = document.getElementById("chart");
+    const ctx = canvas.getContext("2d");
+
+    function drawChart() {
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const points = [];
+      let value = 240;
+
+      for (let i = 0; i < 80; i++) {
+        value += (Math.random() - 0.53) * 20;
+        value = Math.max(80, Math.min(310, value));
+        points.push(value);
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(0, points[0]);
+
+      points.forEach((point, index) => {
+        const x = index * (width / (points.length - 1));
+        ctx.lineTo(x, point);
+      });
+
+      ctx.strokeStyle = "#e8bd58";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.lineTo(width, height);
+      ctx.lineTo(0, height);
+      ctx.closePath();
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, "rgba(232,189,88,.22)");
+      gradient.addColorStop(1, "rgba(232,189,88,0)");
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    }
+
+    drawChart();
+    setInterval(drawChart, 4000);
+  </script>
+</body>
+</html>
